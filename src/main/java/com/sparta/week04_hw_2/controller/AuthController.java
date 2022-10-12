@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
+
 @RestController
 @RequestMapping("/api/member")
 @RequiredArgsConstructor
@@ -25,7 +27,10 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenDto> login(@RequestBody MemberRequestDto memberRequestDto) {
+    public ResponseEntity<TokenDto> login(@RequestBody MemberRequestDto memberRequestDto, HttpServletResponse response) {
+        TokenDto tokenDto = authService.login(memberRequestDto);
+        response.setHeader("AT",tokenDto.getAccessToken());
+        response.setHeader("RT",tokenDto.getRefreshToken());
         return ResponseEntity.ok(authService.login(memberRequestDto));
     }
 
